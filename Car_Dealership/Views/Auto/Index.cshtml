@@ -1,0 +1,79 @@
+﻿@using System.Security.Claims
+@model IEnumerable<Car_Dealership.Models.Auto>
+@{
+    ViewData["Title"] = "Car dealership";
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Car dealership</title>
+</head>
+<body>
+<h3>Cars</h3>
+<form asp-controller="Auto" asp-action="Index">
+    <p>
+        Specify one of the characteristic of the car: <input type="text" name="SearchString">
+    </p>
+    <p>
+        Sort by: <input type="text" name="SortOrder">
+    </p>
+    <input type="submit" value="Filter" style="background-color: #b7ffc9; text-align: center; border: 1px solid darkgrey"/>
+</form>
+<table>
+    <tr>
+        <td>Id</td>
+        <td>Brand</td>
+        <td>Year</td>
+        <td>Price</td>
+        <td>Color</td>
+        <td>Capacity</td>
+    </tr>
+    @foreach (var auto in Model)
+    {
+        <tr>
+            <td>@auto.Id</td>
+            <td>@auto.Brand</td>
+            <td>@auto.Year</td>
+            <td>@auto.Price</td>
+            <td>@auto.Color</td>
+            <td>@auto.Capacity</td>
+            <td>
+                <a asp-action="Buy" asp-controller="Order" asp-route-id="@auto.Id" style="background-color: #b7ffc9; text-align: center; border: 1px solid darkgrey">Buy</a>
+            </td>
+            @if (User.FindFirst(x => x.Type == ClaimsIdentity.DefaultRoleClaimType).Value == "admin")
+            {
+                <td>
+                    <a asp-action="PutAuto" asp-route-id="@auto.Id" style="background-color: #b7ffc9; text-align: center; border: 1px solid darkgrey">Edit</a>
+                </td>
+                <td>
+                    <a asp-action="DeleteAuto" asp-route-id="@auto.Id" style="background-color: #b7ffc9; text-align: center; border: 1px solid darkgrey">Delete</a>
+                </td>
+            }
+        </tr>
+    }
+</table>
+@if (User.FindFirst(x => x.Type == ClaimsIdentity.DefaultRoleClaimType).Value == "admin")
+{
+    <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+        <ul class="navbar-nav flex-grow-1">
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="" asp-controller="Auto" asp-action="PostAuto" style="background-color: #b7ffc9; text-align: center; border: 1px solid darkgrey">Add Auto</a>
+            </li>
+        </ul>
+    </div>
+    <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+        <ul class="navbar-nav flex-grow-1">
+            <li class="nav-item">
+                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index" style="background-color: #b7ffc9; text-align: center; border: 1px solid darkgrey">Back</a>
+            </li>
+        </ul>
+    </div>
+}
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}
+
+</body>
+</html>
